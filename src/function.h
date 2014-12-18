@@ -47,6 +47,7 @@ enum
    gamefunc_Turn_Right,
    gamefunc_Strafe,
    gamefunc_Fire,
+   gamefunc_SecondaryFire,
    gamefunc_Open,
    gamefunc_Run,
    gamefunc_AutoRun,

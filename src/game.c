@@ -5383,7 +5383,13 @@ getinput(SW_PACKET *loc)
         SET(loc->bits, next_weapon + 1);
         }
         
+    if (BUTTON(gamefunc_SecondaryFire))
+        {
+        USERp u = User[pp->PlayerSprite];
         
+        SET(loc->bits, u->WeaponNum + 1);
+    }
+
     if (BUTTON(gamefunc_Previous_Weapon))
         {
         USERp u = User[pp->PlayerSprite];
