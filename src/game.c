@@ -3090,7 +3090,7 @@ VOID InitRunLevel(VOID)
         if (gs.Ambient)    
             StartAmbientSound();
         SetCrosshair();
-        PlaySong(LevelSong, -1, TRUE, TRUE);
+        PlaySong(LevelSong, RedBookSong[Level], TRUE, TRUE);
         SetRedrawScreen(Player + myconnectindex);
         // crappy little hack to prevent play clock from being overwritten
         // for load games
