@@ -88,9 +88,9 @@ int32 JoystickAnalogSaturate[MAXJOYAXES];
 // Screen variables
 //
 
-int32 ScreenMode = 1;
-int32 ScreenWidth = 640;
-int32 ScreenHeight = 480;
+int32 ScreenMode = 0;
+int32 ScreenWidth = 320;
+int32 ScreenHeight = 240;
 int32 ScreenBPP = 8;
 int32 ForceSetup = 1;
 
@@ -204,9 +204,9 @@ void CONFIG_SetDefaults( void )
    int32 i,f;
    byte k1,k2;
 
-   ScreenMode = 1;
-   ScreenWidth = 640;
-   ScreenHeight = 480;
+   ScreenMode = 0;
+   ScreenWidth = 320;
+   ScreenHeight = 240;
    ScreenBPP = 8;
    FXDevice = 0;
    MusicDevice = 0;
