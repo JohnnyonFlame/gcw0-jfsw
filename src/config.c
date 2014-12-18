@@ -68,7 +68,7 @@ int32 NumChannels = 2;
 int32 NumBits     = 16;
 int32 MixRate     = 44100;
 
-int32 UseMouse = 1, UseJoystick = 0;
+int32 UseMouse = 1, UseJoystick = 1;
 
 byte KeyboardKeys[NUMGAMEFUNCTIONS][2];
 int32 MouseButtons[MAXMOUSEBUTTONS];
