@@ -1381,7 +1381,11 @@ static BOOL MNU_SetJoystickButtonFunctions(MenuItem_p item)
     if (function < 0) {
         strcpy(JoystickButtonFunctions[button + clicked*MAXJOYBUTTONS], "  -");
     } else {
-        strcpy(JoystickButtonFunctions[button + clicked*MAXJOYBUTTONS], CONFIG_FunctionNumToName(function));
+    	if (!CONFIG_FunctionNumToName(function))
+    		strcpy(JoystickButtonFunctions[button + clicked*MAXJOYBUTTONS], "  -");
+    	else
+    		strcpy(JoystickButtonFunctions[button + clicked*MAXJOYBUTTONS], CONFIG_FunctionNumToName(function));
+
         for (p = JoystickButtonFunctions[button + clicked*MAXJOYBUTTONS]; *p; p++) {
             if (*p == '_')
                 *p = ' ';
