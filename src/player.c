@@ -6572,7 +6572,7 @@ DoPlayerBeginDie(PLAYERp pp)
         {
         bak = GlobInfoStringTime;
         GlobInfoStringTime = 999;
-        PutStringInfo(pp, "Press SPACE to restart");
+        PutStringInfo(pp, "Press A to restart");
         GlobInfoStringTime = bak;
         }
     
@@ -6899,7 +6899,7 @@ VOID DoPlayerDeathCheckKeys(PLAYERp pp)
     extern BOOL InputMode;
         
     //if (TEST_SYNC_KEY(pp, SK_OPERATE))
-    if (TEST_SYNC_KEY(pp, SK_SPACE_BAR))
+    if (TEST_SYNC_KEY(pp, SK_SPACE_BAR) || !!KEY_PRESSED(KEYSC_SPACE))
         {
         // Spawn a dead LoWang body for non-head deaths
         // Hey Frank, if you think of a better check, go ahead and put it in.

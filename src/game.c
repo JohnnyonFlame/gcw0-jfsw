@@ -2632,7 +2632,7 @@ BonusScreen(PLAYERp pp)
         MNU_DrawString(60, BONUS_LINE(line), ds,1,16);
         
 
-        sprintf(ds,"Press SPACE to continue");
+        sprintf(ds,"Press A to continue");
         MNU_MeasureString(ds, &w, &h);
         MNU_DrawString(TEXT_TEST_COL(w), 185, ds,1,19);
 
@@ -5177,7 +5177,7 @@ getinput(SW_PACKET *loc)
     if (MenuInputMode || UsingMenus || ScrollMode2D || InputMode)
         return;
         
-    SET_LOC_KEY(loc->bits, SK_SPACE_BAR, ((!!KEY_PRESSED(KEYSC_SPACE)) | BUTTON(gamefunc_Open)));
+    SET_LOC_KEY(loc->bits, SK_SPACE_BAR, ((!!KEY_PRESSED(KEYSC_CTRL)) | BUTTON(gamefunc_Open)));
         
     running = BUTTON(gamefunc_Run) || TEST(pp->Flags, PF_LOCK_RUN);
         

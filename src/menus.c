@@ -66,6 +66,7 @@ extern BYTE RedBookSong[40];
 extern BOOL ExitLevel, NewGame;
 extern short Level, Skill;
 extern BOOL MusicInitialized, FxInitialized;
+BOOL MNU_Disabled(MenuItem *item);
 BOOL MNU_CheckUserMap(MenuItem *item);
 BOOL MNU_SaveGameCheck(MenuItem_p item);
 BOOL MNU_TeamPlayCheck(MenuItem *item);
@@ -137,6 +138,68 @@ char maxtextlen;                        // max length allowed for current
 static struct { int xdim,ydim; } validresolutions[MAXVALIDMODES];
 static int numvalidresolutions = 0, validbpps[8], numvalidbpps = 0;
 
+static char *QUIT_MSG[] = {
+	"PRESS (A) TO QUIT, (B) TO FIGHT ON.",
+	"CONFUCIOUS SAY:\n\"HE WHO QUITS, TOTALLY SUCKS!\"\nQuit? (A/B)",
+	"GO AHEAD, LEAVE, BUT WHILE YOU'RE\nGONE, EVIL WILL BE TAKING OVER!\nQuit? (A/B)",
+	"ALL OF JAPAN IS COUNTING ON YOU!\nONLY A LOSER COULD LET THEM DOWN.\nQuit? (A/B)",
+	"THIS IS TOO MUCH! NOW WHERE\nDID I PUT THOSE CHEAT CODES?\nQuit? (A/B)",
+	"PRESS (A) TO RUN HOME TO MOMMY,\n(B) TO BE A MAN.",
+	"YOU DO KNOW, THAT WHILE YOU'RE\nAWAY, WE'LL BE RESTOCKING MT. FUJI\nWITH A MILLION NEW MONSTERS?\nQuit? (A/B)",
+	"COME BACK ANY TIME, WE ARE ALWAYS\nLOOKING FOR A SACK OF RIPPER CHOW!\nQuit? (A/B)",
+	"LET'S MAKE A STEALTHY EXIT TO DOS!\nQuit? (A/B)"
+};
+
+static char *keynames_pretty[256] =
+{
+		[0 ... 255] = NULL,
+
+		/*
+		 * Normal keys
+		 */
+		[sc_UpArrow]    = "UP",
+		[sc_DownArrow]  = "DOWN",
+		[sc_LeftArrow]  = "LEFT",
+		[sc_RightArrow] = "RIGHT",
+
+		[sc_LeftControl] = "A",
+		[sc_LeftAlt]     = "B",
+		[sc_LeftShift]   = "X",
+		[sc_Space]       = "Y",
+
+		[sc_Tab]       = "L",
+		[sc_BackSpace] = "R",
+
+		[sc_Escape] = "START", /* shouldn't be bound, but w/e */
+
+		/*
+		 * Key Combos
+		 */
+
+		[sc_U] = "SEL + UP",
+		[sc_D] = "SEL + DOWN",
+		[sc_L] = "SEL + LEFT",
+		[sc_R] = "SEL + RIGHT",
+
+		[sc_A] = "SEL + A",
+		[sc_B] = "SEL + B",
+		[sc_X] = "SEL + X",
+		[sc_Y] = "SEL + Y",
+
+		[sc_OpenBracket]  = "SEL + L",
+		[sc_CloseBracket] = "SEL + R",
+
+		[sc_Return] = "SEL + START",
+};
+
+const char *getkeyname_pretty(int num)
+	{
+		if ((num >= 256) || (num < 0))
+			return NULL;
+
+		return keynames_pretty[num];
+	}
+
 static void UpdateValidModes(int bpp, int fs)
 {
 	int i, j;
@@ -207,7 +270,7 @@ MenuGroup soundgroup = {110,5,"^Sound",sound_i,pic_optionstitl,0,m_defshade, NUL
 MenuItem parental_i[] =
     {
     {DefButton(btn_parental, 0, "Kid Mode"), OPT_XS, OPT_LINE(0), 1, m_defshade, 0, NULL, NULL, NULL},
-    {DefOption(KEYSC_P, "Change Password"),              OPT_XS, OPT_LINE(1), 1, m_defshade, 0, MNU_ParentalCustom, NULL, NULL},
+    {DefOption(KEYSC_P, "Change Password"),              OPT_XS, OPT_LINE(1), 1, m_defshade, 0, MNU_ParentalCustom, MNU_Disabled, MNU_Disabled},
     {DefNone}
     };
 
@@ -224,12 +287,12 @@ MenuItem screen_i[] =
     {DefSlider(sldr_brightness, KEYSC_B, "Brightness"), OPT_XS,  OPT_LINE(2), 1, m_defshade, 0, NULL, NULL, NULL},
     {DefInert(0, NULL), OPT_XSIDE,                               OPT_LINE(2), 0, m_defshade, 0, NULL, NULL, NULL},
 
-    {DefButton(btn_videofs, 0, "Fullscreen"), OPT_XS,            OPT_LINE(4), 1, m_defshade, 0, NULL, NULL, NULL},
-    {DefSlider(sldr_videobpp, 0, "Colour"), OPT_XS,              OPT_LINE(5), 1, m_defshade, 0, NULL, NULL, NULL},
+    {DefButton(btn_videofs, 0, "Fullscreen"), OPT_XS,            OPT_LINE(4), 1, m_defshade, 0, NULL, MNU_Disabled, NULL},
+    {DefSlider(sldr_videobpp, 0, "Colour"), OPT_XS,              OPT_LINE(5), 1, m_defshade, 0, NULL, MNU_Disabled, NULL},
     {DefInert(0, NULL), OPT_XSIDE,                               OPT_LINE(5), 0, m_defshade, 0, NULL, NULL, NULL},
-    {DefSlider(sldr_videores, 0, "Resolution"), OPT_XS,          OPT_LINE(6), 1, m_defshade, 0, NULL, NULL, NULL},
+    {DefSlider(sldr_videores, 0, "Resolution"), OPT_XS,          OPT_LINE(6), 1, m_defshade, 0, NULL, MNU_Disabled, NULL},
     {DefInert(0, NULL), OPT_XSIDE,                               OPT_LINE(6), 0, m_defshade, 0, NULL, NULL, NULL},
-    {DefOption(0, "Apply Settings"), OPT_XSIDE,                  OPT_LINE(8), 1, m_defshade, 0, ApplyModeSettings, NULL, NULL},
+    {DefOption(0, "Apply Settings"), OPT_XSIDE,                  OPT_LINE(8), 1, m_defshade, 0, ApplyModeSettings, MNU_Disabled, NULL},
     {DefNone}
     };
 
@@ -362,10 +425,10 @@ MenuGroup mouseadvancedgroup = {65, 5, "^Adv'd Mouse", advancedmouse_i, pic_newg
 MenuItem inputsetup_i[] =
     {
     {DefLayer(0, "Keys Setup", &keysetupgroup),OPT_XS,                 OPT_LINE(0),1,m_defshade,0,NULL,NULL,NULL},
-    {DefLayer(0, "Mouse Setup", &mousesetupgroup),OPT_XS,              OPT_LINE(1),1,m_defshade,0,NULL,NULL,NULL},
-    {DefLayer(0, "Joystick Buttons Setup", &joybuttonssetupgroup),OPT_XS,OPT_LINE(2),1,m_defshade,0,NULL,MNU_JoystickCheck,MNU_JoystickButtonsInitialise},
+    {DefLayer(0, "Mouse Setup", &mousesetupgroup),OPT_XS,              OPT_LINE(1),1,m_defshade,0,NULL,MNU_Disabled,NULL},
+    {DefLayer(0, "Joystick Buttons Setup", &joybuttonssetupgroup),OPT_XS,OPT_LINE(2),1,m_defshade,0,NULL,MNU_Disabled,MNU_JoystickButtonsInitialise},
     {DefLayer(0, "Joystick Axes Setup", &joyaxessetupgroup), OPT_XS,   OPT_LINE(3),1,m_defshade,0,NULL,MNU_JoystickCheck,MNU_JoystickAxesInitialise},
-    {DefLayer(0, "Advanced Mouse Setup", &mouseadvancedgroup),OPT_XS,  OPT_LINE(5),1,m_defshade,0,NULL,NULL,NULL},
+    {DefLayer(0, "Advanced Mouse Setup", &mouseadvancedgroup),OPT_XS,  OPT_LINE(5),1,m_defshade,0,NULL,MNU_Disabled,NULL},
     {DefOption(0, "Apply Modern Defaults"), OPT_XS,                    OPT_LINE(7),1,m_defshade,0,MNU_LoadModernDefaults,NULL,NULL},
     {DefOption(0, "Apply Classic Defaults"), OPT_XS,                   OPT_LINE(8),1,m_defshade,0,MNU_LoadClassicDefaults,NULL,NULL},
     {DefNone}
@@ -375,7 +438,7 @@ MenuGroup inputsetupgroup = {65, 5, "^Input Setup", inputsetup_i, pic_newgametit
 MenuItem options_i[] =
     {
     {DefLayer(0, "Screen Menu", &screengroup),OPT_XS,            OPT_LINE(0), 1, m_defshade,0,NULL, NULL, NULL},
-    {DefLayer(0, "Mouse Menu", &mousegroup),OPT_XS,              OPT_LINE(1), 1, m_defshade,0,NULL, MNU_MouseCheck, NULL},
+    {DefLayer(0, "Mouse Menu", &mousegroup),OPT_XS,              OPT_LINE(1), 1, m_defshade,0,NULL, MNU_Disabled, NULL},
     {DefLayer(0, "Sound Menu", &soundgroup),OPT_XS,              OPT_LINE(2), 1, m_defshade,0,MNU_TryMusicInit, MNU_MusicFxCheck, NULL},
     {DefLayer(0, "Input Setup", &inputsetupgroup),OPT_XS,        OPT_LINE(3), 1,m_defshade,0,NULL,NULL,NULL},
     #ifndef PLOCK_VERSION // No need for this in weener version
@@ -535,7 +598,7 @@ short       menuarrayptr;       // Index into menuarray
 MenuGroup   *menuarray[MaxLayers], *currentmenu;
 BOOL UsingMenus = FALSE;
 
-#define MAXDIALOG       2       // Maximum number of dialog strings allowed
+#define MAXDIALOG       5       // Maximum number of dialog strings allowed
 char *dialog[MAXDIALOG];
 
 // Global menu setting values ////////////////////////////////////////////////////////////////////
@@ -583,6 +646,14 @@ MNU_Ten(void)
     return(FALSE);
     }
 */
+
+BOOL
+MNU_Disabled(MenuItem *item)
+	{
+	SET(item->flags, mf_disabled);
+	return TRUE;
+	}
+
 // CTW REMOVED END
 BOOL 
 MNU_DoEpisodeSelect(UserCall call, MenuItem * item)
@@ -781,7 +852,7 @@ BOOL MNU_KeySetupCustom(UserCall call, MenuItem *item)
 
 	if (currentmode) {
 		// customising a key
-		char *strs[] = { "Press the key to assign to", "\"%s\" %s", "or ESCAPE to cancel." };
+		char *strs[] = { "Press the key [+ select] to assign to", "\"%s\" %s", "or START to cancel." };
 		char *col[2] = { "(primary)", "(secondary)" };
 		short w, h = 8;
 		int i, j, y;
@@ -834,8 +905,8 @@ BOOL MNU_KeySetupCustom(UserCall call, MenuItem *item)
             CONTROL_ClearUserInput(&inpt);
 			return TRUE;
 		}
-		else if (KB_KeyPressed(sc_Delete)) {
-			KB_ClearKeyDown(sc_Delete);
+		else if (KB_KeyPressed(sc_Space)) {
+			KB_ClearKeyDown(sc_Space);
 			if (currentkey != gamefunc_Show_Console) {
 				KeyboardKeys[currentkey][currentcol] = 0xff;
 				CONTROL_MapKey(currentkey,
@@ -851,15 +922,15 @@ BOOL MNU_KeySetupCustom(UserCall call, MenuItem *item)
 			currentkey = NUMGAMEFUNCTIONS-1;
 			KB_ClearKeyDown(sc_End);
 		}
-		else if (KB_KeyPressed(sc_PgDn)) {
+		else if (KB_KeyPressed(sc_BackSpace)) {
 			currentkey += PGSIZ;
 			if (currentkey >= NUMGAMEFUNCTIONS) currentkey = NUMGAMEFUNCTIONS-1;
-			KB_ClearKeyDown(sc_PgDn);
+			KB_ClearKeyDown(sc_BackSpace);
 		}
-		else if (KB_KeyPressed(sc_PgUp)) {
+		else if (KB_KeyPressed(sc_Tab)) {
 			currentkey -= PGSIZ;
 			if (currentkey < 0) currentkey = 0;
-			KB_ClearKeyDown(sc_PgUp);
+			KB_ClearKeyDown(sc_Tab);
 		}
 		else if (inpt.button0) {
 			currentmode = 1;
@@ -898,14 +969,14 @@ BOOL MNU_KeySetupCustom(UserCall call, MenuItem *item)
 			j = OPT_LINE(0)+(i-topitem)*8;
 			MNU_DrawSmallString(OPT_XS, j, ds, (i==currentkey)?0:12, 16);
 
-			p = getkeyname(KeyboardKeys[i][0]);
+			p = getkeyname_pretty(KeyboardKeys[i][0]);
 			if (!p || KeyboardKeys[i][0]==0xff) p = "  -";
 			MNU_DrawSmallString(OPT_XSIDE, j, (char*)p, (i==currentkey)?-5:12,
 					(i==currentkey && currentcol==0) ? 14:16);
 
 			if (i == gamefunc_Show_Console) continue;
 
-			p = getkeyname(KeyboardKeys[i][1]);
+			p = getkeyname_pretty(KeyboardKeys[i][1]);
 			if (!p || KeyboardKeys[i][1]==0xff) p = "  -";
 			MNU_DrawSmallString(OPT_XSIDE + 4*14, j, (char*)p, (i==currentkey)?-5:12,
 					(i==currentkey && currentcol==1) ? 14:16);
@@ -938,7 +1009,7 @@ static int MNU_SelectButtonFunction(const char *buttonname, int *currentfunc)
     UserInput inpt = {FALSE,FALSE,dir_None};
     CONTROL_GetUserInput(&inpt);
 
-    if (inpt.button1) {
+    if (KB_KeyPressed(sc_Escape)) {
         KB_ClearKeyDown(sc_Escape);
         returnval = -1;
     }
@@ -1399,7 +1470,7 @@ static MenuItem_p joystick_axis_item = NULL;
 
 static BOOL MNU_JoystickAxesInitialise(MenuItem_p mitem)
 {
-    if (!CONTROL_JoyPresent) {
+if (!CONTROL_JoyPresent) {
         return TRUE;
     }
     if (JoystickAxisPage < 0 || JoystickAxisPage >= joynumaxes) {
@@ -1589,7 +1660,7 @@ MNU_OrderCustom(UserCall call, MenuItem * item)
             }
         }
     
-    if (order_input_buffered.button0 || order_input_buffered.button1 || order_input_buffered.dir != dir_None)    
+    if (order_input_buffered.button0 || order_input_buffered.button1 || order_input_buffered.dir != dir_None)
         {
         if(tst_input.button0 == order_input_buffered.button0 && 
            tst_input.button1 == order_input_buffered.button1 && 
@@ -1956,7 +2027,23 @@ MNU_QuitCustom(UserCall call, MenuItem_p item)
 
         memset(dialog, 0, sizeof(dialog));
 
-        dialog[0] = S_QUITYN;
+    	srand(time(NULL));
+    	int i=0;
+    	int RAND = rand()%(sizeof(QUIT_MSG)/sizeof(char*));
+    	char *__str;
+    	char *__cpy = (char *)malloc(strlen(QUIT_MSG[RAND]) + 1 * sizeof(char));
+
+    	strcpy(__cpy, QUIT_MSG[RAND]);
+    	dialog[0] = strtok(__cpy, "\n");
+
+    	__str = strtok(NULL, "\n");
+
+    	while (__str != NULL)
+    		{
+    		i++;
+    		dialog[i] = __str;
+    		__str = strtok(NULL, "\n");
+    		}
         }
     
     ret = MNU_Dialog();
@@ -2018,7 +2105,7 @@ MNU_QuickLoadCustom(UserCall call, MenuItem_p item)
         memset(dialog, 0, sizeof(dialog));
     
         dialog[0] = "Load saved game";
-        sprintf(QuickLoadDescrDialog,"\"%s\" (Y/N)?",SaveGameDescr[QuickLoadNum]);
+        sprintf(QuickLoadDescrDialog,"\"%s\" (A/B)?",SaveGameDescr[QuickLoadNum]);
         dialog[1] = QuickLoadDescrDialog;
         }
 
@@ -2035,7 +2122,7 @@ MNU_QuickLoadCustom(UserCall call, MenuItem_p item)
 
     if (ret == FALSE)
         {
-        if (KB_KeyPressed(sc_N) || KB_KeyPressed(sc_Space) || KB_KeyPressed(sc_Enter))
+        if (KB_KeyPressed(sc_N) || KB_KeyPressed(sc_Y) || KB_KeyPressed(sc_LeftAlt) || KB_KeyPressed(sc_LeftControl) )
             {    
             cust_callback = NULL;
             if (ReloadPrompt)
@@ -2043,7 +2130,7 @@ MNU_QuickLoadCustom(UserCall call, MenuItem_p item)
                 ReloadPrompt = FALSE;
                 bak = GlobInfoStringTime;
                 GlobInfoStringTime = 999;
-                PutStringInfo(pp, "Press SPACE to restart");
+                PutStringInfo(pp, "Press A to restart");
                 GlobInfoStringTime = bak;
                 }
             
@@ -2743,6 +2830,9 @@ MNU_GetSaveCustom(void)
         {
         strcpy(BackupSaveGameDescr, SaveGameDescr[save_num]);
 
+        /* Auto-names the saves for the users. */
+        sprintf(SaveGameDescr[save_num], "Level %i, Kills %i", Level, Player->Kills);
+
         // clear keyboard buffer
         while (KB_KeyWaiting())
             {
@@ -2834,24 +2924,39 @@ MNU_LoadSaveMove(UserCall call, MenuItem_p item)
         
         if (SavePrompt)
             {
-            if (KB_KeyPressed(sc_Y) || KB_KeyPressed(sc_Enter))
+            if (KB_KeyPressed(sc_Y) || KB_KeyPressed(sc_LeftControl))
                 {
-		KB_ClearKeyDown(sc_Y);
-		KB_ClearKeyDown(sc_Enter);
+				KB_ClearKeyDown(sc_Y);
+				KB_ClearKeyDown(sc_LeftControl);
                 SavePrompt = FALSE;
                 // use input
                 item->custom();
                 }
             else    
-            if (KB_KeyPressed(sc_N))
+            if (KB_KeyPressed(sc_N) || KB_KeyPressed(sc_LeftAlt) )
                 {
-		KB_ClearKeyDown(sc_N);
+        		KB_ClearKeyDown(sc_N);
+        		KB_ClearKeyDown(sc_LeftAlt);
                 strcpy(SaveGameDescr[game_num], BackupSaveGameDescr);
                 SavePrompt = FALSE;
                 MenuInputMode = FALSE;
                 }
             }
         else    
+        {
+            if (SaveGameDescr[game_num][0] == '\0')
+                {
+                strcpy(SaveGameDescr[game_num], BackupSaveGameDescr);
+                MenuInputMode = FALSE;
+                }
+            else
+                {
+                GotInput = TRUE;
+                }
+        }
+
+//Used to be part of the else, but we're not using this anymore, save is now autonamed.
+#if 0
         // get input
         switch (MNU_InputString(SaveGameDescr[game_num], 114))
             {
@@ -2876,6 +2981,7 @@ MNU_LoadSaveMove(UserCall call, MenuItem_p item)
         case TRUE:                      // Got input
             break;
             }
+#endif
         
         if (GotInput)    
             {
@@ -2945,7 +3051,7 @@ MNU_LoadSaveDraw(UserCall call, MenuItem_p item)
         if (SavePrompt)    
             {
             MNU_DrawString(SS_XSTART + SS_BORDER_SIZE + 5, SS_YSTART + SS_BORDER_SIZE + 47, "Overwrite previous", 1, 16);
-            MNU_DrawString(SS_XSTART + SS_BORDER_SIZE + 5, SS_YSTART + SS_BORDER_SIZE + 47 + 12, "  saved game (Y/N)", 1, 16);
+            MNU_DrawString(SS_XSTART + SS_BORDER_SIZE + 5, SS_YSTART + SS_BORDER_SIZE + 47 + 12, "  saved game (A/B)", 1, 16);
             }
         }
     else
@@ -4644,7 +4750,14 @@ MNU_CheckForMenus(void)
     if (UsingMenus)
         {
         //if (MoveSkip2 == 0)
-            MNU_DoMenu(ct_mainmenu, Player + myconnectindex);
+    		MNU_DoMenu(ct_mainmenu, Player + myconnectindex);
+
+    		//Toggle menus
+    		if (KEY_PRESSED(KEYSC_ESC) && !MenuInputMode)
+    		{
+    			KEY_PRESSED(KEYSC_ESC) = 0;
+    			ExitMenus();
+    		}
         }
     else
         {
