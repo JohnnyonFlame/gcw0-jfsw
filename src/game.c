@@ -5019,6 +5019,7 @@ VOID GetHelpInput(PLAYERp pp)
 
 short MirrorDelay;
 int MouseYAxisMode = -1;
+short getCrouch=0;
     
 VOID
 getinput(SW_PACKET *loc)
@@ -5448,7 +5449,16 @@ getinput(SW_PACKET *loc)
 
     SET_LOC_KEY(loc->bits, SK_OPERATE, BUTTON(gamefunc_Open));
     SET_LOC_KEY(loc->bits, SK_JUMP, BUTTON(gamefunc_Jump));
-    SET_LOC_KEY(loc->bits, SK_CRAWL, BUTTON(gamefunc_Crouch));
+	if (BUTTONJUSTPRESSED(gamefunc_Crouch))
+		getCrouch = !getCrouch;
+
+	if (TEST(sector[(pp)->cursectnum].extra, SECTFX_UNDERWATER))
+		{
+		getCrouch = 0;
+		SET_LOC_KEY(loc->bits, SK_CRAWL, BUTTON(gamefunc_Crouch));
+		}
+	else
+		SET_LOC_KEY(loc->bits, SK_CRAWL, getCrouch);
 
     SET_LOC_KEY(loc->bits, SK_TURN_180, BUTTON(gamefunc_TurnAround));
 
