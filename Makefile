@@ -35,7 +35,7 @@ USE_OPENGL ?= 1
 DYNAMIC_OPENGL ?= 1
 NOASM ?= 0
 LINKED_GTK ?= 0
-
+USE_TIMIDITY ?= 0
 
 ##
 ##
@@ -71,6 +71,10 @@ LIBS=-lm
 GAMELIBS=
 NASMFLAGS=-s #-g
 EXESUFFIX=
+
+ifeq (1, $(USE_TIMIDITY))
+	LIBS+=libtimidity/src/libtimidity.a
+endif
 
 JMACTOBJ=$(MACTROOT)/util_lib.$o \
 	$(MACTROOT)/file_lib.$o \
@@ -161,6 +165,10 @@ EDITOROBJS=$(SRC)/jnstub.$o \
 
 include $(EROOT)/Makefile.shared
 
+ifeq (1, $(USE_TIMIDITY))
+	OURCFLAGS+= -DMIDI_VOICE
+endif
+
 ifeq ($(PLATFORM),LINUX)
 	NASMFLAGS+= -f elf
 	GAMELIBS+= $(JFAUDIOLIB_LDFLAGS)
@@ -231,7 +239,7 @@ enginelib editorlib:
 $(ELIB)/$(ENGINELIB): enginelib
 $(ELIB)/$(EDITORLIB): editorlib
 $(AUDIOLIBROOT)/$(JFAUDIOLIB):
-	$(MAKE) -C $(AUDIOLIBROOT) RELEASE=$(RELEASE)
+	$(MAKE) -C $(AUDIOLIBROOT) RELEASE=$(RELEASE) JFAUDIOLIB_USE_TIMIDITY=$(USE_TIMIDITY)
 
 # RULES
 $(SRC)/%.$o: $(SRC)/%.nasm

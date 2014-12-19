@@ -441,7 +441,8 @@ PlaySong(char *song_file_name, int cdaudio_track, BOOL loop, BOOL restart)
             }
         }
 
-    StopSong();
+    if (!SW_SHAREWARE || song_file_name)
+    	StopSong();
         
     if (!SW_SHAREWARE) {
         if (CD_GetCurrentDriver() != ASS_NoSound && CDInitialized)
@@ -494,10 +495,24 @@ PlaySong(char *song_file_name, int cdaudio_track, BOOL loop, BOOL restart)
     }
     
     if (!memcmp(SongPtr, "MThd", 4)) {
+#ifdef MIDI_VOICE
+    	SongVoice = FX_PlayLoopedAuto(SongPtr, SongLength, 0, 0, 0,
+    	                                      255, 255, 255, FX_MUSIC_PRIORITY, MUSIC_ID);
+        if (SongVoice > FX_Ok) {
+            SongType = SongTypeVoc;
+            SongName = strdup(song_file_name);
+            return TRUE;
+        }
+        else
+        {
+#endif
         MUSIC_PlaySong(SongPtr, SongLength, MUSIC_LoopSong);
         SongType = SongTypeMIDI;
         SongName = strdup(song_file_name);
         return TRUE;
+#ifdef MIDI_VOICE
+    	}
+#endif
     } else {
         SongVoice = FX_PlayLoopedAuto(SongPtr, SongLength, 0, 0, 0,
                                       255, 255, 255, FX_MUSIC_PRIORITY, MUSIC_ID);

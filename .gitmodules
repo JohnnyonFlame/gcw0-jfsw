@@ -7,3 +7,6 @@
 [submodule "jfbuild"]
 	path = jfbuild
 	url = ../jfbuild.git
+[submodule "libtimidity"]
+	path = libtimidity
+	url = https://github.com/sezero/libtimidity.git
