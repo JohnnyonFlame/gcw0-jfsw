@@ -441,8 +441,10 @@ PlaySong(char *song_file_name, int cdaudio_track, BOOL loop, BOOL restart)
             }
         }
 
-    if (!SW_SHAREWARE || song_file_name)
-    	StopSong();
+    if (!song_file_name)
+    	return FALSE;
+
+    StopSong();
         
     if (!SW_SHAREWARE) {
         if (CD_GetCurrentDriver() != ASS_NoSound && CDInitialized)
