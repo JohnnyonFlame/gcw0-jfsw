@@ -3461,7 +3461,7 @@ MNU_DoButton(MenuItem_p item, BOOL draw)
                 if (gs.MusicOn)
                     {
                     bak = DemoMode;
-                    PlaySong(LevelSong, RedBookSong[Level], TRUE, TRUE);    
+                    PlaySong(LevelSong, RedBookSong[Level], TRUE, TRUE);
                     DemoMode = bak;
                     }
                 else

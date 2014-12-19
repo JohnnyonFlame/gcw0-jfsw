@@ -575,6 +575,7 @@ PauseSong(BOOL pauseon)
 void
 SetSongVolume(int volume)
 {
+	MUSIC_SetVolume(volume);
 }
 
 BOOL
