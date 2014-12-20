@@ -262,6 +262,39 @@ void CONFIG_SetDefaults( void )
 
       JoystickAnalogAxes[i] = CONFIG_AnalogNameToNum( joystickanalogdefaults[i] );
    }
+
+   for (i=0;i<MAXJOYBUTTONS;i++)
+      {
+         CONTROL_MapButton( JoystickButtons[i], i, FALSE, controldevice_joystick );
+         CONTROL_MapButton( JoystickButtonsClicked[i], i, TRUE,  controldevice_joystick );
+      }
+   for (i=0;i<MAXJOYAXES;i++)
+      {
+         CONTROL_MapAnalogAxis(i, JoystickAnalogAxes[i], controldevice_joystick);
+         CONTROL_MapDigitalAxis( i, JoystickDigitalAxes[i][0], 0, controldevice_joystick );
+         CONTROL_MapDigitalAxis( i, JoystickDigitalAxes[i][1], 1, controldevice_joystick );
+         CONTROL_SetAnalogAxisScale( i, JoystickAnalogScale[i], controldevice_joystick );
+         CONTROL_SetJoyAxisDead(i, JoystickAnalogDead[i]);
+         CONTROL_SetJoyAxisSaturate(i, JoystickAnalogSaturate[i]);
+      }
+   for (i=0; i<MAXMOUSEBUTTONS; i++)
+      {
+      CONTROL_MapButton( MouseButtons[i], i, FALSE, controldevice_mouse );
+      CONTROL_MapButton( MouseButtonsClicked[i], i, TRUE,  controldevice_mouse );
+      }
+   for (i=0; i<MAXMOUSEAXES; i++)
+      {
+      CONTROL_MapAnalogAxis( i, MouseAnalogAxes[i], controldevice_mouse);
+      CONTROL_MapDigitalAxis( i, MouseDigitalAxes[i][0], 0,controldevice_mouse );
+      CONTROL_MapDigitalAxis( i, MouseDigitalAxes[i][1], 1,controldevice_mouse );
+      CONTROL_SetAnalogAxisScale( i, MouseAnalogScale[i], controldevice_mouse );
+      }
+   short gamefunc;
+
+   for (gamefunc = 0; gamefunc < NUMGAMEFUNCTIONS; gamefunc++)
+       {
+       CONTROL_DefineFlag(gamefunc,FALSE);
+       }
 }
 
 
