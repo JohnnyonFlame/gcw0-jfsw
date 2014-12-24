@@ -68,7 +68,7 @@ TO DO
 
 extern int lastUpdate;
 extern BYTE RedBookSong[40];
-extern char UserMapName[80];
+extern char UserMapName[PATH_MAX];
 extern char LevelSong[16];
 extern char SaveGameDescr[10][80];
 extern int PlayClock;
@@ -100,7 +100,7 @@ VOID ScreenLoad(FILE *fin);
 #define ANIM_SAVE 1
     
 extern SW_PACKET loc;
-extern char LevelName[20];
+extern char LevelName[PATH_MAX];
 extern STATE s_NotRestored[];
 
 OrgTileListP otlist[] = {&orgwalllist, &orgwalloverlist, &orgsectorceilinglist, &orgsectorfloorlist};

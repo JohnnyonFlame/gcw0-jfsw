@@ -123,7 +123,7 @@ BOOL NoMeters = FALSE;
 short IntroAnimCount = 0;
 short PlayingLevel = -1;
 BOOL GraphicsMode = FALSE;
-char CacheLastLevel[32] = "";
+char CacheLastLevel[PATH_MAX] = "";
 char PlayerNameArg[32] = "";
 BOOL CleanExit = FALSE;
 extern char cachedebug;
@@ -271,8 +271,8 @@ BOOL InGame = FALSE;
 
 BOOL CommandSetup = FALSE;
 
-char UserMapName[80]="", buffer[80], ch;
-char LevelName[20];
+char UserMapName[PATH_MAX]="", buffer[PATH_MAX], ch;
+char LevelName[PATH_MAX];
 
 BYTE DebugPrintColor = 255;
 

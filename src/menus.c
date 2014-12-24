@@ -480,7 +480,7 @@ MenuItem episode_i[] =
 
 MenuGroup episodegroup = {100, 5, "^Episode", episode_i, pic_newgametitl, 0, m_defshade, MNU_DoEpisodeSelect, NULL, 0};
 
-extern char UserMapName[80];
+extern char UserMapName[PATH_MAX];
 
 MenuItem network_extra_i[] = 
 {

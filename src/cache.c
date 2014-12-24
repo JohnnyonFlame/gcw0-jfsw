@@ -618,7 +618,7 @@ PreCacheActor(VOID)
     
 void DoTheCache(void)
     {
-    extern char CacheLastLevel[32],LevelName[20];
+    extern char CacheLastLevel[PATH_MAX],LevelName[PATH_MAX];
     int i, cnt=0;
     
     PreCacheAmbient();
