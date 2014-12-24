@@ -5247,15 +5247,39 @@ getinput(SW_PACKET *loc)
             }
         else
             {
-            turnheldtime = 0;
+        	if (!(pp->sop && (BUTTON(gamefunc_Strafe_Left) || BUTTON(gamefunc_Strafe_Right))))
+        		turnheldtime = 0;
             }
         }
         
-    if (BUTTON(gamefunc_Strafe_Left) && !pp->sop)
-        svel += keymove;
+    if (BUTTON(gamefunc_Strafe_Left))
+    {
+    	if (!pp->sop)
+    		svel += keymove;
+    	else
+    	{
+            turnheldtime += synctics;
+            if (turnheldtime >= TURBOTURNTIME)
+                angvel -= turnamount;
+            else
+                angvel -= PREAMBLETURN;
+    	}
+    }
 
-    if (BUTTON(gamefunc_Strafe_Right) && !pp->sop)
-        svel += -keymove;
+    if (BUTTON(gamefunc_Strafe_Right))
+    {
+    	if (!pp->sop)
+    		svel += -keymove;
+    	else
+    	{
+            turnheldtime += synctics;
+            if (turnheldtime >= TURBOTURNTIME)
+                angvel += turnamount;
+            else
+                angvel += PREAMBLETURN;
+    	}
+    }
+
         
     if (BUTTON(gamefunc_Move_Forward))
         {
