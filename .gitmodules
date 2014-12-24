@@ -1,12 +1,12 @@
 [submodule "jfmact"]
 	path = jfmact
-	url = ../jfmact.git
+	url = ../gcw0-jfmact.git
 [submodule "jfaudiolib"]
 	path = jfaudiolib
-	url = ../jfaudiolib.git
+	url = ../gcw0-jfaudiolib.git
 [submodule "jfbuild"]
 	path = jfbuild
-	url = ../jfbuild.git
+	url = ../gcw0-jfbuild.git
 [submodule "libtimidity"]
 	path = libtimidity
 	url = https://github.com/sezero/libtimidity.git
