@@ -1001,7 +1001,7 @@ BOOL MNU_KeySetupCustom(UserCall call, MenuItem *item)
 static int MNU_SelectButtonFunction(const char *buttonname, int *currentfunc)
 {
     const int PGSIZ = 9;
-    const char *strs[] = { "Select the function to assign to", "%s", "or ESCAPE to cancel." };
+    const char *strs[] = { "Select the function to assign to", "%s", "or B to cancel." };
     int topitem = 0, botitem = NUMGAMEFUNCTIONS-1;
     int i, j, y;
     short w, h=0;
@@ -1010,8 +1010,8 @@ static int MNU_SelectButtonFunction(const char *buttonname, int *currentfunc)
     UserInput inpt = {FALSE,FALSE,dir_None};
     CONTROL_GetUserInput(&inpt);
 
-    if (KB_KeyPressed(sc_Escape)) {
-        KB_ClearKeyDown(sc_Escape);
+    if (KB_KeyPressed(sc_LeftAlt)) {
+        KB_ClearKeyDown(sc_LeftAlt);
         returnval = -1;
     }
     else if (KB_KeyPressed(sc_Home)) {
