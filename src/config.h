@@ -96,6 +96,7 @@ extern int32 JoystickButtonsClicked[MAXJOYBUTTONS];
 
 extern int32 MouseAnalogAxes[MAXMOUSEAXES];
 extern int32 JoystickAnalogAxes[MAXJOYAXES];
+extern int32 JoystickReverseAxes[MAXJOYAXES];
 extern int32 MouseAnalogScale[MAXMOUSEAXES];
 extern int32 JoystickAnalogScale[MAXJOYAXES];
 extern int32 JoystickAnalogDead[MAXJOYAXES];

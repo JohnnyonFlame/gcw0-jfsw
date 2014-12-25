@@ -381,18 +381,19 @@ MenuItem joyaxes_i[] =
    
     {DefSlider(sldr_joyaxisanalog, 0, "Analog"),        OPT_XS, OPT_LINE(4), 1, m_defshade, 0, NULL, NULL, NULL},
     {DefInert(0, NULL),                              OPT_XSIDE, OPT_LINE(4), 0, m_defshade, 0, NULL, NULL, NULL},
-    {DefLayer(0, "Digital +ve", &joyaxesgroup),         OPT_XS, OPT_LINE(5), 1, m_defshade, 1, NULL, NULL, MNU_JoystickAxisPostProcess},
-    {DefInert(0, JoystickAxisFunctions[1]),          OPT_XSIDE, OPT_LINE(5), 1, m_defshade, 1, NULL, MNU_SetJoystickAxisFunctions, NULL},
-    {DefLayer(0, "Digital -ve", &joyaxesgroup),         OPT_XS, OPT_LINE(6), 1, m_defshade, 0, NULL, NULL, MNU_JoystickAxisPostProcess},
-    {DefInert(0, JoystickAxisFunctions[0]),          OPT_XSIDE, OPT_LINE(6), 1, m_defshade, 0, NULL, MNU_SetJoystickAxisFunctions, NULL},
+    {DefButton(btn_joyreverse, 0, "Reverse"), 			OPT_XS, OPT_LINE(5), 1, m_defshade, 0, NULL, NULL, NULL},
+    {DefLayer(0, "Digital +ve", &joyaxesgroup),         OPT_XS, OPT_LINE(6), 1, m_defshade, 1, NULL, NULL, MNU_JoystickAxisPostProcess},
+    {DefInert(0, JoystickAxisFunctions[1]),          OPT_XSIDE, OPT_LINE(6), 1, m_defshade, 1, NULL, MNU_SetJoystickAxisFunctions, NULL},
+    {DefLayer(0, "Digital -ve", &joyaxesgroup),         OPT_XS, OPT_LINE(7), 1, m_defshade, 0, NULL, NULL, MNU_JoystickAxisPostProcess},
+    {DefInert(0, JoystickAxisFunctions[0]),          OPT_XSIDE, OPT_LINE(7), 1, m_defshade, 0, NULL, MNU_SetJoystickAxisFunctions, NULL},
 
-    {DefSlider(sldr_joyaxisdead, 0, "Dead Zone"),       OPT_XS, OPT_LINE(8), 1, m_defshade, 0, NULL, NULL, NULL},
-    {DefInert(0, NULL),                              OPT_XSIDE, OPT_LINE(8), 0, m_defshade, 0, NULL, NULL, NULL},
-    {DefSlider(sldr_joyaxissatur, 0, "Saturate"),       OPT_XS, OPT_LINE(9), 1, m_defshade, 0, NULL, NULL, NULL},
+    {DefSlider(sldr_joyaxisdead, 0, "Dead Zone"),       OPT_XS, OPT_LINE(9), 1, m_defshade, 0, NULL, NULL, NULL},
     {DefInert(0, NULL),                              OPT_XSIDE, OPT_LINE(9), 0, m_defshade, 0, NULL, NULL, NULL},
+    {DefSlider(sldr_joyaxissatur, 0, "Saturate"),       OPT_XS, OPT_LINE(10), 1, m_defshade, 0, NULL, NULL, NULL},
+    {DefInert(0, NULL),                              OPT_XSIDE, OPT_LINE(10), 0, m_defshade, 0, NULL, NULL, NULL},
 
-    {DefInert(0, JoystickAxisPageName),                 OPT_XS, OPT_LINE(11), 1, m_defshade, 0, NULL, NULL, NULL},
-    {DefOption(0, "Next..."),                        OPT_XSIDE, OPT_LINE(11), 1, m_defshade, 0, MNU_JoystickAxisNextPage, NULL, NULL},
+    {DefInert(0, JoystickAxisPageName),                 OPT_XS, OPT_LINE(12), 1, m_defshade, 0, NULL, NULL, NULL},
+    {DefOption(0, "Next..."),                        OPT_XSIDE, OPT_LINE(12), 1, m_defshade, 0, MNU_JoystickAxisNextPage, NULL, NULL},
 
     {DefNone},
     };
@@ -1483,6 +1484,7 @@ if (!CONTROL_JoyPresent) {
     slidersettings[sldr_joyaxisscale] = JoystickAnalogScale[JoystickAxisPage] >> 13;
     slidersettings[sldr_joyaxisdead] = JoystickAnalogDead[JoystickAxisPage] >> 10;
     slidersettings[sldr_joyaxissatur] = JoystickAnalogSaturate[JoystickAxisPage] >> 10;
+    buttonsettings[btn_joyreverse] = JoystickReverseAxes[JoystickAxisPage];
 
     return TRUE;
 }
@@ -2247,6 +2249,8 @@ MNU_InitMenus(void)
     slidersettings[sldr_joyaxisanalog] = 0;
     slidersettings[sldr_joyaxisdead] = 0;
     slidersettings[sldr_joyaxissatur] = 0;
+
+    buttonsettings[btn_joyreverse] = 0;
 
     // Distinguish between Single or Multiplay for new game menu types
     if(numplayers > 1)
@@ -3538,7 +3542,10 @@ MNU_DoButton(MenuItem_p item, BOOL draw)
                 JS_ToggleLockouts();
             }
             break;
-
+        case btn_joyreverse:
+        	JoystickReverseAxes[JoystickAxisPage] = state = buttonsettings[item->button];
+        	CONTROL_SetJoyAxesReverse( JoystickAxisPage, state );
+        	break;
 	case btn_videofs:
 	    {
 		int lastx, lasty, lastbpp, newoffset, i;

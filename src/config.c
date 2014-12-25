@@ -80,6 +80,7 @@ int32 JoystickButtons[MAXJOYBUTTONS];
 int32 JoystickButtonsClicked[MAXJOYBUTTONS];
 int32 JoystickDigitalAxes[MAXJOYAXES][2];
 int32 JoystickAnalogAxes[MAXJOYAXES];
+int32 JoystickReverseAxes[MAXJOYAXES];
 int32 JoystickAnalogScale[MAXJOYAXES];
 int32 JoystickAnalogDead[MAXJOYAXES];
 int32 JoystickAnalogSaturate[MAXJOYAXES];
@@ -252,9 +253,10 @@ void CONFIG_SetDefaults( void )
    }
 
    memset(JoystickDigitalAxes, -1, sizeof(JoystickDigitalAxes));
-   for (i=0; i < (int32)(sizeof(joystickanalogdefaults)/sizeof(char*)); i++) {
+   for (i=0; i < MAXJOYAXES; i++) {
       JoystickAnalogScale[i] = 65536;
       JoystickAnalogDead[i] = 1024;
+      JoystickReverseAxes[i] = 0;
       JoystickAnalogSaturate[i] = 32767-1024;
 
       JoystickDigitalAxes[i][0] = CONFIG_FunctionNameToNum( joystickdigitaldefaults[i*2] );
@@ -274,6 +276,7 @@ void CONFIG_SetDefaults( void )
          CONTROL_MapDigitalAxis( i, JoystickDigitalAxes[i][0], 0, controldevice_joystick );
          CONTROL_MapDigitalAxis( i, JoystickDigitalAxes[i][1], 1, controldevice_joystick );
          CONTROL_SetAnalogAxisScale( i, JoystickAnalogScale[i], controldevice_joystick );
+         CONTROL_SetJoyAxesReverse( i, JoystickReverseAxes[i] );
          CONTROL_SetJoyAxisDead(i, JoystickAnalogDead[i]);
          CONTROL_SetJoyAxisSaturate(i, JoystickAnalogSaturate[i]);
       }
@@ -532,6 +535,11 @@ void CONFIG_SetupJoystick( void )
       SCRIPT_GetNumber(scripthandle, "Controls", str,&scale);
       JoystickAnalogScale[i] = scale;
 
+      Bsprintf(str,"JoystickReverseAxes%d",i);
+      scale = JoystickReverseAxes[i];
+      SCRIPT_GetNumber(scripthandle, "Controls", str,&scale);
+      JoystickReverseAxes[i] = scale;
+
       Bsprintf(str,"JoystickAnalogDead%d",i);
       scale = JoystickAnalogDead[i];
       SCRIPT_GetNumber(scripthandle, "Controls", str,&scale);
@@ -554,6 +562,7 @@ void CONFIG_SetupJoystick( void )
          CONTROL_MapDigitalAxis( i, JoystickDigitalAxes[i][0], 0, controldevice_joystick );
          CONTROL_MapDigitalAxis( i, JoystickDigitalAxes[i][1], 1, controldevice_joystick );
          CONTROL_SetAnalogAxisScale( i, JoystickAnalogScale[i], controldevice_joystick );
+         CONTROL_SetJoyAxesReverse( i, JoystickReverseAxes[i] );
          CONTROL_SetJoyAxisDead(i, JoystickAnalogDead[i]);
          CONTROL_SetJoyAxisSaturate(i, JoystickAnalogSaturate[i]);
       }
@@ -736,6 +745,9 @@ void CONFIG_WriteSetup( void )
 		
        Bsprintf(buf,"JoystickAnalogScale%d",dummy);
        SCRIPT_PutNumber(scripthandle, "Controls", buf, JoystickAnalogScale[dummy], FALSE, FALSE);
+
+       Bsprintf(buf,"JoystickReverseAxes%d",dummy);
+       SCRIPT_PutNumber(scripthandle, "Controls", buf, JoystickReverseAxes[dummy], FALSE, FALSE);
 
        Bsprintf(buf,"JoystickAnalogDead%d",dummy);
        SCRIPT_PutNumber(scripthandle, "Controls", buf, JoystickAnalogDead[dummy], FALSE, FALSE);
